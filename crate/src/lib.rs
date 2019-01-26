@@ -10,6 +10,7 @@ use js_sys::{Math, Array};
 // macro_rules! vec_of_strings {
 //     ($($x:expr),*) => (vec![$($x.to_string()),*]);
 // }
+// let names = vec_of_strings!["a", "b", "c", "d"];
 
 #[wasm_bindgen]
 extern "C" {
@@ -52,7 +53,7 @@ cfg_if! {
     }
 }
 
-// Called by our JS entry point to run the example.
+// Called by our JS entry point
 #[wasm_bindgen]
 pub fn run() -> Result<(), JsValue> {
     set_panic_hook();
@@ -84,8 +85,7 @@ pub fn collect_names(js_names: &JsValue) -> Result<Vec<String>, JsValue> {
     console_log!("hi {}", 23);
 
     for x in iterator {
-        // If the iterator's `next` method throws an error, propagate it
-        // up to the caller.
+        // If the iterator's `next` method throws an error, propagate it up to the caller.
         let x = x?;
 
         match x.as_string() {
@@ -114,8 +114,6 @@ impl NameBuilder {
             Ok(names) => names,
             _ => panic!("must pass an iterable JS value")
         };
-
-        // let names = vec_of_strings!["a", "b", "c", "d"];
 
         NameBuilder {
             names
