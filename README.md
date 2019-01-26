@@ -15,4 +15,4 @@ wasm-pack build
 npm run start
 ```
 
-> created using [rust-webpack-template](https://github.com/rustwasm/rust-webpack-template)
+> Created using [rust-webpack-template](https://github.com/rustwasm/rust-webpack-template)
