@@ -3,9 +3,11 @@ extern crate cfg_if;
 extern crate web_sys;
 extern crate wasm_bindgen;
 extern crate js_sys;
+extern crate rand;
 
 use wasm_bindgen::prelude::*;
-use js_sys::{Math, Array};
+use js_sys::{Array};
+use rand::Rng;
 
 // macro_rules! vec_of_strings {
 //     ($($x:expr),*) => (vec![$($x.to_string()),*]);
@@ -73,11 +75,13 @@ pub fn run() -> Result<(), JsValue> {
 
 #[wasm_bindgen]
 pub fn random_num(max: i32) -> i32 {
-    (Math::random() * max as f64) as i32
+    let mut rng = rand::thread_rng();
+    rng.gen_range(0, max)
+    // (Math::random() * max as f64) as i32
 }
 
-pub fn collect_names(js_names: &JsValue) -> Result<Vec<String>, JsValue> {
-    let mut names: Vec<String> = Vec::new();
+pub fn collect_names(js_names: &JsValue) -> Result<Vec<JsValue>, JsValue> {
+    let mut names: Vec<JsValue> = Vec::new();
 
     let iterator = js_sys::try_iter(js_names)?.ok_or_else(|| {
         "JS value not iterable!"
@@ -88,10 +92,7 @@ pub fn collect_names(js_names: &JsValue) -> Result<Vec<String>, JsValue> {
         // If the iterator's `next` method throws an error, propagate it up to the caller.
         let x = x?;
 
-        match x.as_string() {
-            Some(name) => names.push(name),
-            None => console_warn!("only string values will be collected")
-        }
+        names.push(x)
     }
 
     Ok(names)
@@ -99,14 +100,17 @@ pub fn collect_names(js_names: &JsValue) -> Result<Vec<String>, JsValue> {
 
 #[wasm_bindgen]
 pub struct NameBuilder {
-    names: Vec<String>
+    names: Vec<JsValue>,
+    length: usize,
+    rng: rand::rngs::ThreadRng
 }
 
 // Public methods, exported to JavaScript.
 #[wasm_bindgen]
 impl NameBuilder {
+
     pub fn new(js_names: Array) -> NameBuilder {
-        if(js_names.length() < 1) {
+        if js_names.length() < 1 {
             panic!("must pass an array with at least 1 value");
         }
 
@@ -115,12 +119,32 @@ impl NameBuilder {
             _ => panic!("must pass an iterable JS value")
         };
 
+        let length = names.len();
+
         NameBuilder {
-            names
+            names,
+            length,
+            rng: rand::thread_rng()
         }
     }
 
-    pub fn get_random_name(&self) -> String {
-        self.names[random_num(self.names.len() as i32) as usize].to_string()
+    pub fn get_random_name(&mut self) -> JsValue {
+        // let index = random_num(self.length) as usize;
+        // self.names[index].clone()
+
+        let index = self.rng.gen_range(0, self.length);
+        self.names[index].clone()
+    }
+
+    pub fn get_random_names(&mut self, times: i32) -> Array {
+        let names = js_sys::Array::new();
+
+        let mut i = 0;
+        while i < times {
+            names.push(&self.get_random_name());
+            i = i + 1;
+        }
+
+        names
     }
 }
