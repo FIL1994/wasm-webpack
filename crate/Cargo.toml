@@ -46,7 +46,7 @@ features = [
 [features]
 default = ["console_error_panic_hook"]
 
-# [profile.release]
-# # Tell `rustc` to optimize for small code size.
-# opt-level = "s"
-# lto = true
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"
+lto = true

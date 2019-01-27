@@ -29,9 +29,9 @@ macro_rules! console_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
 }
 
-macro_rules! console_warn {
-    ($($t:tt)*) => (warn(&format_args!($($t)*).to_string()))
-}
+// macro_rules! console_warn {
+//     ($($t:tt)*) => (warn(&format_args!($($t)*).to_string()))
+// }
 
 cfg_if! {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -77,7 +77,6 @@ pub fn run() -> Result<(), JsValue> {
 pub fn random_num(max: i32) -> i32 {
     let mut rng = rand::thread_rng();
     rng.gen_range(0, max)
-    // (Math::random() * max as f64) as i32
 }
 
 pub fn collect_names(js_names: &JsValue) -> Result<Vec<JsValue>, JsValue> {
@@ -129,9 +128,6 @@ impl NameBuilder {
     }
 
     pub fn get_random_name(&mut self) -> JsValue {
-        // let index = random_num(self.length) as usize;
-        // self.names[index].clone()
-
         let index = self.rng.gen_range(0, self.length);
         self.names[index].clone()
     }
