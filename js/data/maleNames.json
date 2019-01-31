@@ -1,4 +1,4 @@
-export default [
+[
   "Jeremiah",
   "Johnathon",
   "Kris",
@@ -1097,4 +1097,4 @@ export default [
   "Philip",
   "Jerrod",
   "Emil"
-];
+]
