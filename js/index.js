@@ -16,7 +16,7 @@ import("../crate/pkg").then(module => {
   const { NameBuilder } = module;
   const nameBuilder = NameBuilder.new(names);
 
-  const TIMES = 20000000;
+  const TIMES = 2000;
   loop(
     TIMES,
     () => {
@@ -34,9 +34,11 @@ import("../crate/pkg").then(module => {
   );
 
   const start = performance.now();
-  nameBuilder.get_random_names(TIMES);
+  const results = nameBuilder.get_random_names(TIMES);
   const end = performance.now();
   console.log(`WASM Looped - Total: ${end - start}`);
+
+  console.log(results);
 });
 
 function loop(times, callback, title) {
